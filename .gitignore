@@ -197,3 +197,4 @@ cython_debug/
 *.xlsx
 *.gz
 *.jsonl
+config.yml
