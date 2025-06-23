@@ -2,7 +2,23 @@
   "index_patterns": ["gear_products"],
   "template": {
     "settings": {
-      "index.default_pipeline": "ingest_pipeline_gear_products"
+      "index": {
+        "default_pipeline": "ingest_pipeline_gear_products",
+        "analysis": {
+          "analyzer": {
+            "gear_stemmed": {
+              "tokenizer": "standard",
+              "char_filter": [
+                "html_strip"
+              ],
+              "filter": [
+                "lowercase",
+                "kstem"
+              ]
+            }
+          }
+        }
+      }
     },
     "mappings": {
       "properties": {
@@ -18,7 +34,13 @@
               "ignore_above": 256
         },
         "description": {
-          "type": "text"
+          "type": "text",
+          "fields": {
+            "stemmed": {
+              "type": "text",
+              "analyzer": "gear_stemmed"
+            }
+          }
         },
         "features": {
           "type": "keyword",
@@ -42,7 +64,13 @@
           "type": "nested"
         },
         "title_x": {
-          "type": "text"
+          "type": "text",
+          "fields": {
+            "stemmed": {
+              "type": "text",
+              "analyzer": "gear_stemmed"
+            }
+          }
         }
       }
     }
