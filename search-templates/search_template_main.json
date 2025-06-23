@@ -104,7 +104,21 @@
           ],
           "boost_mode": "multiply"
         }
-      }
+      },
+
+      "_source": [
+
+        {{#source_fields}}
+        "{{source_field}}"
+        {{^last}},{{/last}}
+        {{/source_fields}}
+
+        {{^source_fields}}
+        "title_x",
+        "categories"
+        {{/source_fields}}
+        
+      ]
     }
     """
   }
