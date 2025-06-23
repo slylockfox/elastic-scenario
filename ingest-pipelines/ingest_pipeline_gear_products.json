@@ -1,0 +1,19 @@
+{
+  "description": "Product catalog from Amazon data source",
+  "processors": [
+
+    {
+      "set":
+      {"field": "_source.datedebug", "value": "{{_source.details.Date First Available}}"}
+    },
+    {
+      "set": {
+        "if": "ctx.containsKey('details') && ctx.details.containsKey('Date First Available')",
+        "field": "_source.created_at", 
+        "value": "{{_source.details.Date First Available}}",
+        "ignore_failure": true
+      }
+    }
+
+  ]
+}

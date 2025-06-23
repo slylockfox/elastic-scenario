@@ -1,0 +1,50 @@
+{
+  "index_patterns": ["gear_products"],
+  "template": {
+    "settings": {
+      "index.default_pipeline": "ingest_pipeline_gear_products"
+    },
+    "mappings": {
+      "properties": {
+        "average_rating": {
+          "type": "float"
+        },
+        "created_at": {
+          "type": "date",
+          "format": "MMMM dd, yyyy||MMMM d, yyyy"
+        },
+        "categories": {
+          "type": "keyword",
+              "ignore_above": 256
+        },
+        "description": {
+          "type": "text"
+        },
+        "features": {
+          "type": "keyword",
+              "ignore_above": 256
+        },
+        "main_category": {
+          "type": "keyword",
+              "ignore_above": 256
+        },
+        "parent_asin": {
+          "type": "keyword",
+              "ignore_above": 256
+        },
+        "price": {
+          "type": "float"
+        },
+        "rating_number": {
+          "type": "long"
+        },
+        "reviews": {
+          "type": "nested"
+        },
+        "title_x": {
+          "type": "text"
+        }
+      }
+    }
+  }
+}
