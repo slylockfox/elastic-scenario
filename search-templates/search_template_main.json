@@ -1,0 +1,117 @@
+{
+  "script": {
+    "lang": "mustache",
+    "source":
+    """
+    {
+      "track_total_hits": true,
+
+      {{#page_size}}
+      "size": "{{page_size}}",
+      {{/page_size}}
+
+      {{#page_start}}
+      "from": "((page_start}}",
+      {{/page_start}}
+
+      {{#sort}}
+      "sort": {{#toJson}}sort{{/toJson}},
+      {{/sort}}
+
+      "query": {
+
+        "function_score": {
+          "query": {
+            "bool": {
+              "filter": {{#toJson}}filter{{/toJson}}
+
+              {{#excluded_search_terms}}
+              ,
+              "must_ not": [
+                {
+                  "multi_match": {
+                    "query": "{{excluded_search_terms}}",
+                    "type": "cross_fields",
+                    "fields": [
+                      "title_x.stemmed",
+                      "description.stemmed"
+                    ],
+                    "operator": "or"
+                  }
+                }
+              ],
+              {{/excluded_search_terms}}
+
+              {{#unquoted_search_terms}}
+              ,
+              "must": [
+                {
+                  "multi_match": {
+                    "query": "{{unquoted_search_terms}}",
+                    "type": "cross_fields",
+                    "fields": [
+                      "title_x.stemmed",
+                      "description.stemmed"
+                    ],
+                    "operator": "and"
+                  }
+                }
+              ],
+
+              "should": [
+                {
+                  "multi_match": {
+                    "query": "{{unquoted_search_terms}}",
+                    "type": "best_fields",
+                    "fields": [
+                      "title_x.stemmed^100",
+                      "description.stemmed"
+                    ],
+                    "operator": "and",
+                    "boost": 10
+                  }
+                }
+              ]
+              {{/unquoted_search_terms}}
+            }
+          },
+
+          "functions": [
+
+            {{#now_date}}
+            {
+              "filter": {"exists": {"field": "created_at"}},
+              "gauss" {"created_at": {"origin": "{{now_date}}", "scale": "1825d", "offset": "1825d", "decay": 0.7}},
+              "weight": 2
+            },
+            {
+              "filter": {"bool":{"must_not":[{ "exists": {"field": "created_at"}} }]}},
+              "script_score": {"script": {"source": "1825"}
+            },
+            {{/now_date}}
+
+            {
+              "filter": {"exists": {"field": "average_rating"}},
+              "script_score": {"script": {"source": "doc['average_rating'].value"}
+              }
+            },
+            {
+              "filter": {"bool":{"must_not":[ {"exists": {"field": "average_rating"}} ] }},
+              "script_score": {"script": {"source": "3"}
+              }
+            }
+
+          ],
+          "boost_mode": "multiply"
+        }
+      }
+    }
+    """
+  }
+}
+
+
+
+
+
+
