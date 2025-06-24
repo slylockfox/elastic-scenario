@@ -23,7 +23,7 @@
         "function_score": {
           "query": {
             "bool": {
-              "filter": {{#toJson}}filter{{/toJson}}
+              "filter": {{#toJson}}filters{{/toJson}}
 
               {{#excluded_search_terms}}
               ,
@@ -129,7 +129,25 @@
         }
       },
 
-      "_source": [
+      {{#postfilters}}
+      "post_filter": {{#toJson}}postfilters{{/toJson}},
+      {{/postfilters}}
+
+      "aggs" :
+
+        {{#aggregations}}
+          {{#toJson}}aggregations{{/toJson}}
+        {{/aggregations}}
+      
+        {{^aggregations}}
+          {
+            "available": {
+              "terms": { "field": "available" }
+            }
+          }
+        {{/aggregations}}
+
+      ,"_source": [
 
         {{#source_fields}}
         "{{source_field}}"
@@ -146,9 +164,3 @@
     """
   }
 }
-
-
-
-
-
-

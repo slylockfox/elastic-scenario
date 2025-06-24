@@ -48,6 +48,24 @@
     {
       "set": {"field": "_source.typeahead_context", "value": "All"}
     },
+
+    {
+      "script": {
+        "lang": "painless",
+        "source":
+        """
+          // data source doesn't have "available" so set it randomly for demo purposes
+          Random r = new Random();
+          int sample = r.nextInt(6);
+          if (sample == 1) {
+            ctx.available = false;
+          } else {
+            ctx.available = true;
+          }
+        """
+      }
+    },
+
     {"remove": {"field": "typeahead_weight"}},
     {"remove": {"field": "typeahead_source"}}
 

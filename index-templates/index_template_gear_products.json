@@ -126,6 +126,9 @@
         },
         "typeahead_context": {
           "type": "keyword"
+        },
+        "available": {
+          "type": "boolean"
         }
       }
     }

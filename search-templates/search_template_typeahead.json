@@ -16,7 +16,7 @@
             "must": [
               {
                 "match_phrase": {
-                  "sngran": "{{all_typed_so_far}}"
+                  "title_x.ngrams": "{{all_typed_so_far}}"
                 }
               }
             ]
