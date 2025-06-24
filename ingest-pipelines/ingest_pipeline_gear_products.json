@@ -48,8 +48,8 @@
     {
       "set": {"field": "_source.typeahead_context", "value": "All"}
     },
-    {"remove": {"field": ".typeahead_weight"}},
-    {"remove": {"field": ".typeahead_source"}}
+    {"remove": {"field": "typeahead_weight"}},
+    {"remove": {"field": "typeahead_source"}}
 
 
   ]

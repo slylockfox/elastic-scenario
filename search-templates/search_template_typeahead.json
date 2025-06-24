@@ -26,15 +26,26 @@
         "titles": {
           "prefix": "{{all_typed_so_far}}",
           "completion": {
-            "field": "title_x.ngrams"
+            "field": "typeahead",
             "size": {{sugg count}}{{^sugg count}}5{{/sugg count}},
-            "skip_duplicates": true
-            {{#typeahead_context}}
-            ,"contexts": { "typeahead_context": [ "{{typeahead_context}}" ] }
-            {{/typeahead_context}}
+            "skip_duplicates": true,
+            "contexts": { "typeahead_context": [ "{{typeahead_context}}{{^typeahead_context}}All{{/typeahead_context}}" ] }
           }
         }
-      }
+      },
+
+      "_source": [
+
+        {{#source_fields}}
+        "{{source_field}}"
+        {{^last}},{{/last}}
+        {{/source_fields}}
+
+        {{^source_fields}}
+        "title_x"
+        {{/source_fields}}
+        
+      ]
     }
     """
   }
