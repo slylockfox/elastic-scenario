@@ -1,55 +1,119 @@
-PUT music
+### Part 1 – Data Modeling & Index Setup
+get gear_products
+
+### Part 2 – Search Use Cases
+
+## Lexical Search
+
+# Full-text search on title and description
+# Boosting based on fields
+# Custom relevance tuning with boosting and scoring
+# Use of function_score 
+# Rescoring (post filters)
+# Filtering available products only 
+GET _scripts/search_template_main
+GET gear_products/_search/template
 {
-  "mappings": {
-    "properties": {
-      "suggest": {
-        "type": "completion"
-      }
+  "id": "search_template_main",
+  "params": {
+    "unquoted_search_terms": "shirt",
+    "filters": [],
+    "postfilters": {
+        "term": { "available": "true" }
+    },
+    "source_fields": [
+      {"source_field": "title_x"},
+      {"source_field": "brand"},
+      {"source_field": "details"},
+      {"source_field": "created_at","last": true}
+    ],
+    "sorts": [
+      {"sort": {"created_at": "asc"},"last": true}
+    ]
+  }
+}
+
+# Autocomplete with search-as-you-type or edge n-gram
+GET _scripts/search_template_typeahead
+GET gear_products/_search/template
+{
+    "id": "search_template_typeahead",
+    "params": {
+        "all_typed_so_far": "studio scul"
     }
+}
+
+# Synonyms
+GET gear_products/_search/template
+{
+  "id": "search_template_main",
+  "params": {
+    "unquoted_search_terms": "sportfishing",
+    "desc_subfield": "synonyms",
+    "filters": []
   }
 }
-PUT music/_doc/1?refresh
+
+# Fuzzy matching 
+GET gear_products/_search/template
 {
-  "suggest" : {
-    "input": [ "Nevermind", "Nirvana" ],
-    "weight" : 34
+  "id": "search_template_main",
+  "params": {
+    "unquoted_search_terms": "shirtz",
+    "fuzziness": "AUTO",
+    "filters": []
   }
 }
-POST music/_search
+
+# Phrase search 
+GET gear_products/_search/template
 {
-  "suggest": {
-    "song-suggest": {
-      "prefix": "tes",
-      "completion": {
-          "field": "suggest"
-      }
+  "id": "search_template_main",
+  "params": {
+    "quoted_search_terms": "camping food",
+    "filters": []
+  }
+}
+
+# Filter by category, brand, price range, tags
+GET gear_products/_search/template
+{
+    "id": "search_template_main",
+    "params": {
+        "filters": [
+          {"term": { "categories": "Fishing" }},
+          {"term": { "brand": "Booyah" }} 
+               ],
+    "source_fields": [
+      {"source_field": "title_x"},
+      {"source_field": "brand"},
+      {"source_field": "categories"},
+      {"source_field": "price","last": true}
+    ]
+    }
+}
+######################################################
+
+GET gear_products/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match_phrase": {
+            "title_x.ngrams": "ess"
+          }
+        }
+      ]
     }
   }
 }
 
-PUT music/_doc/11
-{
-    "title_x": "test of typeahead",
-    "typeahead_context": "All",
-  "suggest":  {
-    "input": ["test of typeahead" ],
-    "weight": 1
-  }
-}
-PUT gear_products/_doc/1
-{
-    "title_x": "test of typeahead",
-    "typeahead_context": "All"
-}
-GET gear_products/_search
 GET gear_products/_search
 {
-    "query": {
-        "match_all": {}
-    },
     "suggest": {
       "titles": {
-        "prefix": "tes",
+        "prefix": "ama",
         "completion": {
             "field": "typeahead",
             "size": 3,
@@ -63,7 +127,7 @@ GET gear_products/_search/template
 {
     "id": "search_template_typeahead",
     "params": {
-        "all_typed_so_far": "trek"
+        "all_typed_so_far": "studio scul"
     }
 }
 
@@ -82,13 +146,24 @@ GET gear_products/_search
         }
     }
 }
+GET gear_products/_search
+{
+  "query": {
+    "multi_match": {
+       "query": "shirtz",
+        "fields": "description.stemmed",
+        "fuzziness": "AUTO"
+      }
+    }
+  }
+}
 
 GET gear_products/_search/template
 {
     "id": "search_template_main",
     "params": {
         "unquoted_search_terms": "youth helmet",
-        "filter": []
+        "filters": []
     }
 }
 
@@ -96,14 +171,34 @@ GET gear_products/_search/template
 {
     "id": "search_template_main",
     "params": {
-        "unquoted_search_terms": "shirts",
-        "filter": [],
-        "source_fields": [
-        {"source_field": "title_x"},
-        {"source_field": "description"},
-        {"source_field": "categories", "last": true}
-      ]
+        "unquoted_search_terms": "outdoor",
+        "filters": {
+          "term": { "categories": "Fishing" }
+        }
     }
+}
+
+GET gear_products/_search/template
+{
+  "id": "search_template_main",
+  "params": {
+    "unquoted_search_terms": "shirtz",
+    "fuzziness": "AUTO",
+    "desc_subfield": "synonyms",
+    "filters": [],
+    "postfilters": {
+        "term": { "available": "true" }
+    },
+    "source_fields": [
+      {"source_field": "title_x"},
+      {"source_field": "brand"},
+      {"source_field": "details"},
+      {"source_field": "created_at","last": true}
+    ],
+    "sorts": [
+      {"sort": {"created_at": "asc"},"last": true}
+    ]
+  }
 }
 
 POST _scripts/search_template_main
@@ -194,6 +289,5 @@ GET /my-index/_search
         }
     }
 }
-
 
 

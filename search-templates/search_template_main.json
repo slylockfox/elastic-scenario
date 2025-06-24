@@ -26,8 +26,7 @@
               "filter": {{#toJson}}filters{{/toJson}}
 
               {{#excluded_search_terms}}
-              ,
-              "must_ not": [
+              ,"must_ not": [
                 {
                   "multi_match": {
                     "query": "{{excluded_search_terms}}",
@@ -39,13 +38,13 @@
                     "operator": "or"
                   }
                 }
-              ],
+              ]
               {{/excluded_search_terms}}
 
-              {{#unquoted_search_terms}}
-              ,
               {{^fuzziness}}
-              "must": [
+
+              {{#unquoted_search_terms}}
+              ,"must": [
                 {
                   "multi_match": {
                     "query": "{{unquoted_search_terms}}",
@@ -57,10 +56,37 @@
                     "operator": "and"
                   }
                 }
-              ],
+                {{#quoted_search_terms}}
+                ,
+                {
+                  "multi_match": {
+                    "query": "{{quoted_search_terms}}",
+                    "type": "phrase",
+                    "fields": ["title_x","description"]
+                  }
+                }
+                {{/quoted_search_terms}}
+              ]
+              {{/unquoted_search_terms}}
+
+              {{^unquoted_search_terms}}
+              {{#quoted_search_terms}}
+              ,"must": [
+                {
+                  "multi_match": {
+                    "query": "{{quoted_search_terms}}",
+                    "type": "phrase",
+                    "fields": ["title_x^100","description"]
+                  }
+                }
+              ]
+              {{/quoted_search_terms}}
+              {{/unquoted_search_terms}}
+
               {{/fuzziness}}
 
-              "should": [
+              {{#unquoted_search_terms}}
+              ,"should": [
                 {
                   "multi_match": {
                     "query": "{{unquoted_search_terms}}",
