@@ -40,6 +40,21 @@
       }
     },
 
+    {
+      "script": {
+        "lang": "painless",
+        "source":
+        """
+          ctx.allcontent = '';
+          if (ctx.containsKey('title_x')) {
+            ctx.allcontent += ctx.title_x;
+          }
+          if (ctx.containsKey('description')) {
+            ctx.allcontent += ' ' + ctx.description;
+          }
+        """
+      }
+    },
 
     {
       "script": {

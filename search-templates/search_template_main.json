@@ -44,19 +44,21 @@
 
               {{#unquoted_search_terms}}
               ,
+              {{^fuzziness}}
               "must": [
                 {
                   "multi_match": {
                     "query": "{{unquoted_search_terms}}",
                     "type": "cross_fields",
                     "fields": [
-                      "title_x.synonyms",
-                      "description.stemmed"
+                      "title_x.{{title_subfield}}{{^title_subfield}}stemmed{{/title_subfield}}",
+                      "description.{{desc_subfield}}{{^desc_subfield}}stemmed{{/desc_subfield}}"
                     ],
                     "operator": "and"
                   }
                 }
               ],
+              {{/fuzziness}}
 
               "should": [
                 {
@@ -69,6 +71,9 @@
                     ],
                     "operator": "and",
                     "boost": 10
+                    {{#fuzziness}}
+                    ,"fuzziness": "{{fuzziness}}"
+                    {{/fuzziness}}
                   }
                 },
                 {
@@ -157,7 +162,18 @@
       ]
       {{/sorts}}
 
-      ,"_source": [
+      ,"suggest": {
+        "spelling": {
+          "text": "{{unquoted_search_terms}}",
+          "term": {
+            "field": "allcontent",
+            "size": 3,
+            "min_doc_freq": 1
+          }
+        }
+      },
+
+      "_source": [
 
         {{#source_fields}}
         "{{source_field}}"

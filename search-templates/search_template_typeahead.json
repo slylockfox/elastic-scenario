@@ -4,7 +4,7 @@
     "source":
     """
     {
-      "size": {{sugg count}}{{^sugg count}}5{{/sugg count}},
+      "size": {{sugg_count}}{{^sugg_count}}5{{/sugg_count}},
       "query" :
         {
           "bool": {
@@ -27,7 +27,7 @@
           "prefix": "{{all_typed_so_far}}",
           "completion": {
             "field": "typeahead",
-            "size": {{sugg count}}{{^sugg count}}5{{/sugg count}},
+            "size": {{sugg_count}}{{^sugg_count}}5{{/sugg_count}},
             "skip_duplicates": true,
             "contexts": { "typeahead_context": [ "{{typeahead_context}}{{^typeahead_context}}All{{/typeahead_context}}" ] }
           }

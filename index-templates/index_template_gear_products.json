@@ -133,6 +133,9 @@
         "brand": {
           "type": "keyword",
               "ignore_above": 256
+        },
+        "allcontent": {
+          "type": "text"
         }
       }
     }
