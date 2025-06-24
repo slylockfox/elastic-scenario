@@ -147,6 +147,13 @@
           }
         {{/aggregations}}
 
+      {{#sorts}}
+      ,"sort": [
+        {{#toJson}}sort{{/toJson}}
+        {{^last}},{{/last}}
+      ]
+      {{/sorts}}
+
       ,"_source": [
 
         {{#source_fields}}
