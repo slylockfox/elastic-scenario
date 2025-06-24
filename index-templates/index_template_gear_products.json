@@ -10,6 +10,11 @@
               "type": "synonym",
               "synonyms_set": "gear_synonym_set",
               "updateable": true
+            },
+            "gear_edge_ngram_filter": {
+              "type": "edge_ngram",
+              "min_gram": 3,
+              "max_gram": 20
             }
           },
           "analyzer": {
@@ -31,6 +36,14 @@
               "filter": [
                 "lowercase",
                 "gear_synonym_filter"
+              ]
+            },
+            "gear_typeahead": {
+              "type": "custom",
+              "tokenizer": "standard",
+              "filter": [
+                "lowercase",
+                "gear_edge_ngram_filter"
               ]
             }
           }
@@ -94,8 +107,25 @@
             "synonyms": {
               "type": "text",
               "search_analyzer": "gear_synonyms"
+            },
+            "ngrams": {
+              "type": "text",
+              "analyzer": "gear_typeahead"
             }
           }
+        },
+        "typeahead": {
+          "type": "completion",
+          "contexts": [
+            {
+              "name": "typeahead_context",
+              "type": "category",
+              "path": "typeahead_context"
+            }
+          ]
+        },
+        "typeahead_context": {
+          "type": "keyword"
         }
       }
     }

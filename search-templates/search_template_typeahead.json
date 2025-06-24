@@ -1,0 +1,41 @@
+{
+  "script": {
+    "lang": "mustache",
+    "source":
+    """
+    {
+      "size": {{sugg count}}{{^sugg count}}5{{/sugg count}},
+      "query" :
+        {
+          "bool": {
+            {{#typeahead_context}}
+            "filter": [
+              {"term": {"typeahead_context": "{{typeahead_context}}"}}
+            ],
+            {{/typeahead_context}}
+            "must": [
+              {
+                "match_phrase": {
+                  "sngran": "{{all_typed_so_far}}"
+                }
+              }
+            ]
+          }
+        },
+      "suggest": {
+        "titles": {
+          "prefix": "{{all_typed_so_far}}",
+          "completion": {
+            "field": "title_x.ngrams"
+            "size": {{sugg count}}{{^sugg count}}5{{/sugg count}},
+            "skip_duplicates": true
+            {{#typeahead_context}}
+            ,"contexts": { "typeahead_context": [ "{{typeahead_context}}" ] }
+            {{/typeahead_context}}
+          }
+        }
+      }
+    }
+    """
+  }
+}

@@ -3,8 +3,7 @@
   "processors": [
 
     {
-      "set":
-      {"field": "_source.datedebug", "value": "{{_source.details.Date First Available}}"}
+      "set": {"field": "_source.datedebug", "value": "{{_source.details.Date First Available}}"}
     },
     {
       "set": {
@@ -13,7 +12,45 @@
         "value": "{{_source.details.Date First Available}}",
         "ignore_failure": true
       }
-    }
+    },
+
+    {
+      "script": {
+        "lang": "painless",
+        "source":
+        """
+          ctx.typeahead_weight = 0;
+          if (ctx.containsKey('title_x') && ctx.title_x.length() > 0) {
+            ctx.typeahead_weight = (int) (500.0 / ctx.title_x.length());
+          }
+        """
+      }
+    },
+
+    {
+      "set": {
+        "if": "ctx.containsKey('title_x') && ctx.title_x.length() > 0",
+        "field": "_source.typeahead_source", 
+        "value": 
+        """
+        {
+          "input": [
+            "{{_source.title_x}}"
+          ],
+          "weight": {{_source.typeahead_weight}}
+        }
+        """
+      }
+    },
+    {
+      "json": {"field": "typeahead_source", "target_field": "typeahead"}
+    },
+    {
+      "set": {"field": "_source.typeahead_context", "value": "All"}
+    },
+    {"remove": {"field": ".typeahead_weight"}},
+    {"remove": {"field": ".typeahead_source"}}
+
 
   ]
 }
