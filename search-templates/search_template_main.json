@@ -50,7 +50,7 @@
                     "query": "{{unquoted_search_terms}}",
                     "type": "cross_fields",
                     "fields": [
-                      "title_x.stemmed",
+                      "title_x.synonyms",
                       "description.stemmed"
                     ],
                     "operator": "and"
@@ -68,6 +68,29 @@
                       "description.stemmed"
                     ],
                     "operator": "and",
+                    "boost": 10
+                  }
+                },
+                {
+                  "multi_match": {
+                    "query": "{{unquoted_search_terms}}",
+                    "type": "best_fields",
+                    "fields": [
+                      "title_x.stemmed^100",
+                      "description.stemmed"
+                    ],
+                    "operator": "or",
+                    "boost": 10
+                  }
+                },
+                {
+                  "multi_match": {
+                    "query": "{{unquoted_search_terms}}",
+                    "type": "phrase",
+                    "fields": [
+                      "title_x.stemmed^100",
+                      "description.stemmed"
+                    ],
                     "boost": 10
                   }
                 }

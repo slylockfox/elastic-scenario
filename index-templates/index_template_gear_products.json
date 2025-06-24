@@ -5,6 +5,13 @@
       "index": {
         "default_pipeline": "ingest_pipeline_gear_products",
         "analysis": {
+          "filter": {
+            "gear_synonym_filter": {
+              "type": "synonym",
+              "synonyms_set": "gear_synonym_set",
+              "updateable": true
+            }
+          },
           "analyzer": {
             "gear_stemmed": {
               "tokenizer": "standard",
@@ -14,6 +21,16 @@
               "filter": [
                 "lowercase",
                 "kstem"
+              ]
+            },
+            "gear_synonyms": {
+              "tokenizer": "standard",
+              "char_filter": [
+                "html_strip"
+              ],
+              "filter": [
+                "lowercase",
+                "gear_synonym_filter"
               ]
             }
           }
@@ -39,6 +56,10 @@
             "stemmed": {
               "type": "text",
               "analyzer": "gear_stemmed"
+            },
+            "synonyms": {
+              "type": "text",
+              "search_analyzer": "gear_synonyms"
             }
           }
         },
@@ -69,6 +90,10 @@
             "stemmed": {
               "type": "text",
               "analyzer": "gear_stemmed"
+            },
+            "synonyms": {
+              "type": "text",
+              "search_analyzer": "gear_synonyms"
             }
           }
         }
