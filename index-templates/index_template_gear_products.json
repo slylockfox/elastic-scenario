@@ -136,6 +136,9 @@
         },
         "allcontent": {
           "type": "text"
+        },
+        "tags": {
+          "type": "keyword"
         }
       }
     }

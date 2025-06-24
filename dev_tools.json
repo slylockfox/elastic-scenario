@@ -1,12 +1,21 @@
 ### Part 1 – Data Modeling & Index Setup
 get gear_products
+GET gear_products/_search/template
+{
+  "id": "search_template_main",
+  "params": {
+    "page_size": 0,
+    "filters": []
+  }
+}
 
 ### Part 2 – Search Use Cases
 
 ## Lexical Search
 
-# Full-text search on title and description
+## Full-text search on title and description
 # Boosting based on fields
+## Relevance & Ranking
 # Custom relevance tuning with boosting and scoring
 # Use of function_score 
 # Rescoring (post filters)
@@ -28,7 +37,7 @@ GET gear_products/_search/template
       {"source_field": "created_at","last": true}
     ],
     "sorts": [
-      {"sort": {"created_at": "asc"},"last": true}
+      {"sort": {"created_at": "desc"},"last": true}
     ]
   }
 }
@@ -75,6 +84,7 @@ GET gear_products/_search/template
   }
 }
 
+## Structured Search & Filtering
 # Filter by category, brand, price range, tags
 GET gear_products/_search/template
 {
@@ -82,7 +92,8 @@ GET gear_products/_search/template
     "params": {
         "filters": [
           {"term": { "categories": "Fishing" }},
-          {"term": { "brand": "Booyah" }} 
+          {"term": { "brand": "Booyah" }} ,
+          {"range": {"price": {"lte": 5}}}
                ],
     "source_fields": [
       {"source_field": "title_x"},
@@ -91,6 +102,27 @@ GET gear_products/_search/template
       {"source_field": "price","last": true}
     ]
     }
+}
+
+# Sort by price, date added, or rating
+GET gear_products/_search/template
+{
+  "id": "search_template_main",
+  "params": {
+    "unquoted_search_terms": "shirt",
+    "desc_subfield": "synonyms",
+    "filters": [],
+    "source_fields": [
+      {"source_field": "title_x"},
+      {"source_field": "price"},
+      {"source_field": "average_rating"},
+      {"source_field": "created_at","last": true}
+    ],
+    "sorts": [
+      {"sort": {"average_rating": "desc"}},
+      {"sort": {"created_at": "desc"},"last": true}
+    ]
+  }
 }
 ######################################################
 
@@ -204,6 +236,7 @@ GET gear_products/_search/template
 POST _scripts/search_template_main
 
 
+
 GET gear_products/_search
 {
     "size": 0,
@@ -212,7 +245,13 @@ GET gear_products/_search
         "date_histogram": {
             "field": "created_at",
         "calendar_interval": "year"
-
+        }
+      },
+      "prices": {
+        "histogram": {
+          "field": "price",
+          "interval": 50,
+        "min_doc_count": 1
         }
       }
     }

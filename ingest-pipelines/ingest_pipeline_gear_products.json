@@ -90,13 +90,31 @@
     {
       "set": {"field": "_source.typeahead_context", "value": "All"}
     },
+    {
+      "json": {"field": "ratings_json", "target_field": "ratings"}
+    },
 
     {
       "script": {
         "lang": "painless",
         "source":
         """
-          // data source doesn't have "available" so set it randomly for demo purposes
+          // extract titles from reviews, and use them as tags
+          ArrayList tagList = new ArrayList();
+          for (rating in ctx.ratings) {
+            tagList.add(rating.title_y);
+          }
+          ctx.tags = tagList;
+        """
+      }
+    },
+
+    {
+      "script": {
+        "lang": "painless",
+        "source":
+        """
+          // data source doesn't have _available_ so set it randomly for demo purposes
           Random r = new Random();
           int sample = r.nextInt(6);
           if (sample == 1) {
@@ -111,6 +129,7 @@
     {"remove": {"field": "typeahead_weight"}},
     {"remove": {"field": "typeahead_source"}},
 
+    {"remove": {"field": "ratings_json"}},
     {"remove": {"field": "features"}}
 
   ]

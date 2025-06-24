@@ -167,26 +167,39 @@
       "aggs" :
 
         {{#aggregations}}
-          {{#toJson}}aggregations{{/toJson}}
+        {{#toJson}}aggregations{{/toJson}}
         {{/aggregations}}
       
         {{^aggregations}}
-          {
-            "available": {
-              "terms": { "field": "available" }
-            },
-            "brands": {
-              "terms": { "field": "brand" }
-            }
+        {
+          "available": {
+            "terms": { "field": "available" }
+          },
+          "brands": {
+            "terms": { "field": "brand" }
+          },
+          "tags": {
+            "terms": { "field": "tags" }
+          },
+          "dates": {
+            "date_histogram": {"field": "created_at","calendar_interval": "year"}
+          },
+          "prices": {
+            "histogram": {"field": "price","interval": 50,"min_doc_count": 1}
           }
+        }
         {{/aggregations}}
 
-      {{#sorts}}
       ,"sort": [
+        {{#sorts}}
         {{#toJson}}sort{{/toJson}}
         {{^last}},{{/last}}
+        {{/sorts}}
+
+        {{^sorts}}
+        {"_score": "desc"}
+        {{/sorts}}
       ]
-      {{/sorts}}
 
       ,"suggest": {
         "spelling": {
