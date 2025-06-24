@@ -13,6 +13,33 @@
         "ignore_failure": true
       }
     },
+    {
+      "set": {
+        "if": "ctx.containsKey('details') && ctx.details.containsKey('Brand Name')",
+        "field": "_source.brand", 
+        "value": "{{_source.details.Brand Name}}",
+        "ignore_failure": true
+      }
+    },
+
+    {
+      "script": {
+        "lang": "painless",
+        "source":
+        """
+          if (ctx.containsKey('details')) {
+            if (ctx.details.containsKey('Brand Name')) {
+              ctx.brand = ctx.details['Brand Name']
+            } else if (ctx.details.containsKey('Brand')) {
+              ctx.brand = ctx.details['Brand']
+            } else if (ctx.details.containsKey('Manufacturer')) {
+              ctx.brand = ctx.details['Manufacturer']
+            }
+          }
+        """
+      }
+    },
+
 
     {
       "script": {
@@ -67,8 +94,9 @@
     },
 
     {"remove": {"field": "typeahead_weight"}},
-    {"remove": {"field": "typeahead_source"}}
+    {"remove": {"field": "typeahead_source"}},
 
+    {"remove": {"field": "features"}}
 
   ]
 }

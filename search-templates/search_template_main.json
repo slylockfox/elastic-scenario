@@ -143,6 +143,9 @@
           {
             "available": {
               "terms": { "field": "available" }
+            },
+            "brands": {
+              "terms": { "field": "brand" }
             }
           }
         {{/aggregations}}

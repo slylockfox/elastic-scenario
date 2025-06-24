@@ -129,6 +129,10 @@
         },
         "available": {
           "type": "boolean"
+        },
+        "brand": {
+          "type": "keyword",
+              "ignore_above": 256
         }
       }
     }
