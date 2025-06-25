@@ -26,7 +26,7 @@
               "filter": {{#toJson}}filters{{/toJson}}
 
               {{#excluded_search_terms}}
-              ,"must_ not": [
+              ,"must_not": [
                 {
                   "multi_match": {
                     "query": "{{excluded_search_terms}}",
