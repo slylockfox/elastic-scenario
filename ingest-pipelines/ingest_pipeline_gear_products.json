@@ -126,6 +126,18 @@
       }
     },
 
+    {
+      "inference": {
+          "model_id": ".elser_model_2_linux-x86_64",
+          "input_output": [
+              {
+                  "input_field": "title_x",
+                  "output_field": "title_elser_embedding"
+              }
+          ]
+      }
+    },
+
     {"remove": {"field": "typeahead_weight"}},
     {"remove": {"field": "typeahead_source"}},
 

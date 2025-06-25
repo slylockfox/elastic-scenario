@@ -175,6 +175,9 @@
           "available": {
             "terms": { "field": "available" }
           },
+          "categories": {
+            "terms": { "field": "categories" }
+          },
           "brands": {
             "terms": { "field": "brand" }
           },
@@ -221,7 +224,8 @@
 
         {{^source_fields}}
         "title_x",
-        "categories"
+        "categories",
+        "main_category"
         {{/source_fields}}
         
       ]

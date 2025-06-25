@@ -114,6 +114,9 @@
             }
           }
         },
+        "title_elser_embedding": {
+          "type": "sparse_vector"
+        },
         "typeahead": {
           "type": "completion",
           "contexts": [
