@@ -1,5 +1,6 @@
 ### Part 1 – Data Modeling & Index Setup
-get gear_products
+GET gear_products
+GET gear_products/_search
 GET gear_products/_search/template
 {
   "id": "search_template_main",
@@ -124,7 +125,33 @@ GET gear_products/_search/template
     ]
   }
 }
+
+## Semantic / Vector
+GET gear_products/_search
+{
+   "query":{
+      "sparse_vector": {
+        "field": "title_elser_embedding",
+        "inference_id": ".elser_model_2_linux-x86_64",
+        "query": "shirts from sports teams"
+      }
+   },
+   "_source": ["title_x"]
+}
+
 ######################################################
+
+GET gear_products/_search
+{
+   "query":{
+      "sparse_vector": {
+        "field": "title_elser_embedding",
+        "inference_id": ".elser_model_2_linux-x86_64",
+        "query": "shirts from sports teams"
+      }
+   },
+   "_source": ["title_x"]
+}
 
 GET gear_products/_search
 {
