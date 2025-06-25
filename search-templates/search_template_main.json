@@ -132,27 +132,23 @@
 
           "functions": [
 
-            {{#now_date}}
             {
               "filter": {"exists": {"field": "created_at"}},
-              "gauss" {"created_at": {"origin": "{{now_date}}", "scale": "1825d", "offset": "1825d", "decay": 0.7}},
+              "gauss": {"created_at": {"origin": "{{now_date}}{{^now_date}}now{{/now_date}}", "scale": "1825d", "offset": "1825d", "decay": 0.7}},
               "weight": 2
             },
             {
-              "filter": {"bool":{"must_not":[{ "exists": {"field": "created_at"}} }]}},
-              "script_score": {"script": {"source": "1825"}
+              "filter": {"bool":{"must_not":[{ "exists": {"field": "created_at"}} ] }},
+              "script_score": {"script": {"source": "1825"}}
             },
-            {{/now_date}}
 
             {
               "filter": {"exists": {"field": "average_rating"}},
-              "script_score": {"script": {"source": "doc['average_rating'].value"}
-              }
+              "script_score": {"script": {"source": "doc['average_rating'].value"}}
             },
             {
               "filter": {"bool":{"must_not":[ {"exists": {"field": "average_rating"}} ] }},
-              "script_score": {"script": {"source": "3"}
-              }
+              "script_score": {"script": {"source": "3"}}
             }
 
           ],
@@ -224,7 +220,8 @@
 
         {{^source_fields}}
         "title_x",
-        "categories",
+        "created_at",
+        "average_rating",
         "main_category"
         {{/source_fields}}
         
